@@ -7,7 +7,6 @@ option(BUILD_WEB "build for web platform" OFF)
 
 if (BUILD_WEB)
     add_compile_definitions(PLATFORM_WEB)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s ALLOW_MEMORY_GROWTH=1 --no-heap-copy")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s ALLOW_MEMORY_GROWTH=1 --no-heap-copy")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
 endif ()

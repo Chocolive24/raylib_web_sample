@@ -7,57 +7,87 @@
 
 #include <iostream>
 
-void UpdateDrawFrame(void); // Update and Draw one frame
-
 static constexpr int screenWidth = 800;
 static constexpr int screenHeight = 650;
 
-static Texture2D penguin;
-static Vector2 position;
+class Renderer {
+public:
+  Texture2D penguin;
+  Vector2 position;
+  Sound music;
+
+  void Init() {
+    penguin = LoadTexture("data/Penguin.png");
+    position = {screenWidth * 0.5f - penguin.width,
+                screenHeight * 0.5f - penguin.height};
+
+    InitAudioDevice();
+
+    music = LoadSound("data/music.wav");
+
+    PlaySound(music);
+  }
+
+  void Deinit() {
+    UnloadTexture(penguin);
+    UnloadSound(music);  // Unload sound
+
+    CloseAudioDevice();
+    CloseWindow();
+  }
+
+  void Loop(void) {
+    BeginDrawing();
+    {
+      ClearBackground(BLACK);
+
+      DrawTextureEx(penguin, position, 0.f, 4.f, WHITE);
+
+      DrawText("Raylib sample !!!", 290, 240, 30, WHITE);
+    }
+    EndDrawing();
+  }
+};
+
+// Update and Draw one frame
+void UpdateDrawFrame(void* renderer) {
+  static_cast<Renderer*>(renderer)->Loop();
+}  
 
 int main() {
   InitWindow(screenWidth, screenHeight, "Raylib sample");
 
-  penguin = LoadTexture("data/Penguin.png");
-  position = {screenWidth * 0.5f - penguin.width,
-                      screenHeight * 0.5f - penguin.height};
-
-  InitAudioDevice();
-
-  // Load explosion sound
-  Sound music = LoadSound("data/music.wav");
-
-  PlaySound(music);
+  Renderer renderer;
+  renderer.Init();
 
 #ifdef PLATFORM_WEB
-  emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
+  emscripten_set_main_loop_arg(UpdateDrawFrame, &renderer, 0, 1);
 
 #else
   SetTargetFPS(60);
 
   while (!WindowShouldClose()) {
-    UpdateDrawFrame();
+    //UpdateDrawFrame();
+    renderer.Loop();
   }
 
 #endif
 
-  UnloadTexture(penguin);
-  UnloadSound(music);  // Unload sound
-
-  CloseAudioDevice();
-  CloseWindow();
+  renderer.Deinit();
 
   return EXIT_SUCCESS;
 }
 
-void UpdateDrawFrame(void) {
-  BeginDrawing();
-  {
-    ClearBackground(BLACK);
-
-    DrawTextureEx(penguin, position, 0.f, 4.f, WHITE);
-
-    DrawText("Raylib sample !!!", 290, 240, 30, WHITE);
-  }
-  EndDrawing();
-}
+//void UpdateDrawFrame(void) {
+//
+//  
+//  //BeginDrawing();
+//  //{
+//  //  ClearBackground(BLACK);
+//
+//  //  DrawTextureEx(penguin, position, 0.f, 4.f, WHITE);
+//
+//  //  DrawText("Raylib sample !!!", 290, 240, 30, WHITE);
+//  //}
+//  //EndDrawing();
+//}
