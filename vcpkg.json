@@ -1,0 +1,7 @@
+{
+    "name": "raylib-sample",
+    "version-string": "1.0",
+    "dependencies": [
+          "raylib"
+      ]
+}
